@@ -15,6 +15,21 @@
       menu.setAttribute('aria-label', 'Open menu');
     }
   });
+  const desktopExplore = document.querySelector('.nav-dropdown');
+  document.addEventListener('click', (event) => {
+    if (!desktopExplore.contains(event.target)) desktopExplore.open = false;
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      const wasMobileOpen = !mobile.hidden;
+      desktopExplore.open = false;
+      document.querySelector('.mobile-explore').open = false;
+      mobile.hidden = true;
+      menu.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-label', 'Open menu');
+      if (wasMobileOpen) menu.focus();
+    }
+  });
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const nodes = document.querySelectorAll('.reveal');
   if (reduced.matches || !('IntersectionObserver' in window)) nodes.forEach(node => node.classList.add('is-visible'));
