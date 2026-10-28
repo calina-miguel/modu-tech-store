@@ -1,0 +1,39 @@
+<section class="modu-hero" aria-labelledby="modu-hero-title">
+  <div class="modu-hero__copy" data-modu-reveal>
+    <p class="modu-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    <h1 id="modu-hero-title">{{ section.settings.heading | escape }}</h1>
+    <p class="modu-hero__description">{{ section.settings.description | escape }}</p>
+    <div class="modu-hero__actions">
+      <a class="modu-button" href="{{ section.settings.primary_link | default: routes.all_products_collection_url }}">{{ section.settings.primary_label | escape }} <span aria-hidden="true">&nearr;</span></a>
+      {% if section.settings.secondary_link != blank %}<a class="modu-text-link" href="{{ section.settings.secondary_link }}">{{ section.settings.secondary_label | escape }}</a>{% endif %}
+    </div>
+    <p class="modu-hero__note">Designed for the way you work.</p>
+  </div>
+  <div class="modu-hero__visual" aria-hidden="true" data-modu-parallax>
+    <div class="modu-orbit modu-orbit--outer"></div>
+    <div class="modu-orbit modu-orbit--inner"></div>
+    <div class="modu-device">
+      <div class="modu-device__screen"><span>MODU</span><i></i><b>01</b></div>
+      <div class="modu-device__edge"></div>
+    </div>
+    <span class="modu-visual-label modu-visual-label--top">FORM / FUNCTION</span>
+    <span class="modu-visual-label modu-visual-label--bottom">TECH FOR EVERYDAY</span>
+  </div>
+  <div class="modu-hero__index" aria-hidden="true"><span>01 / 03</span><span>SCROLL TO EXPLORE ↓</span></div>
+</section>
+
+{% schema %}
+{
+  "name": "MODU editorial hero",
+  "settings": [
+    {"type":"text","id":"eyebrow","label":"Eyebrow","default":"THE MODERN TECH EDIT"},
+    {"type":"text","id":"heading","label":"Heading","default":"Better tech. Better every day."},
+    {"type":"textarea","id":"description","label":"Description","default":"Thoughtful gear for your desk, your commute, and everywhere in between."},
+    {"type":"text","id":"primary_label","label":"Primary button","default":"Explore the collection"},
+    {"type":"url","id":"primary_link","label":"Primary link"},
+    {"type":"text","id":"secondary_label","label":"Secondary button","default":"Our approach"},
+    {"type":"url","id":"secondary_link","label":"Secondary link"}
+  ],
+  "presets": [{"name":"MODU editorial hero"}]
+}
+{% endschema %}

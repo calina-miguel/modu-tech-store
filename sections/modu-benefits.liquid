@@ -1,0 +1,17 @@
+<section class="modu-benefits page-width" aria-label="Why shop with us">
+  {% for block in section.blocks %}
+    <div class="modu-benefit" data-modu-reveal {{ block.shopify_attributes }}>
+      <span class="modu-benefit__number">0{{ forloop.index }}</span>
+      <h2>{{ block.settings.heading | escape }}</h2>
+      <p>{{ block.settings.body | escape }}</p>
+    </div>
+  {% endfor %}
+</section>
+{% schema %}
+{
+  "name":"MODU benefits",
+  "max_blocks":3,
+  "blocks":[{"type":"benefit","name":"Benefit","settings":[{"type":"text","id":"heading","label":"Heading","default":"Built to last"},{"type":"textarea","id":"body","label":"Description","default":"Practical products chosen with care."}]}],
+  "presets":[{"name":"MODU benefits","blocks":[{"type":"benefit"},{"type":"benefit"},{"type":"benefit"}]}]
+}
+{% endschema %}

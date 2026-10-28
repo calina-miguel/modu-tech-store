@@ -1,0 +1,81 @@
+{
+  "sections": {
+    "modu_hero": {
+      "type": "modu-hero",
+      "settings": {
+        "eyebrow": "THE MODERN TECH EDIT",
+        "heading": "Better tech. Better every day.",
+        "description": "Thoughtful gear for your desk, your commute, and everywhere in between.",
+        "primary_label": "Shop the collection",
+        "primary_link": "shopify://collections/all",
+        "secondary_label": "Our approach",
+        "secondary_link": "shopify://pages/about"
+      }
+    },
+    "modu_benefits": {
+      "type": "modu-benefits",
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Intentional design",
+            "body": "Useful details, clean form, and gear that fits your routine."
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Everyday ready",
+            "body": "Tech essentials for work, travel, and everything in between."
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Easy to choose",
+            "body": "Clear specifications and straightforward product information."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ],
+      "settings": {}
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "The essential edit",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "all",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "swipe_on_mobile": false,
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "padding_top": 50,
+        "padding_bottom": 80
+      }
+    }
+  },
+  "order": [
+    "modu_hero",
+    "modu_benefits",
+    "featured_collection"
+  ]
+}
