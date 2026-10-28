@@ -20,3 +20,37 @@
 .contact__button:hover{background:var(--lime);color:var(--ink)}
 .contact__button span{font-size:18px}
 @media(max-width:650px){.contact{padding:75px 6%;display:block}.contact__button{margin-top:24px}.mobile-nav{max-height:calc(100svh - 68px);overflow:auto}}
+/* Lightweight motion layer */
+:where(a,button,summary):focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.hero-copy .eyebrow{animation:fade-up .85s .1s both}
+.hero-copy h1{animation:fade-up 1s .18s both}
+.hero-description{animation:fade-up .9s .32s both}
+.hero-actions{animation:fade-up .9s .42s both}
+.hero-visual::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.22),transparent 42%,rgba(13,28,4,.14));mix-blend-mode:soft-light}
+.hero-visual .orbit-outer{animation:orbit-turn 18s linear infinite}
+.hero-visual .orbit-inner{animation:orbit-turn 14s linear infinite reverse}
+.benefits article:nth-child(2){transition-delay:.09s}
+.benefits article:nth-child(3){transition-delay:.18s}
+.category-grid .category:nth-child(2){transition-delay:.08s}
+.category-grid .category:nth-child(3){transition-delay:.16s}
+.category-art{transition:transform .65s cubic-bezier(.18,.8,.2,1)}
+.category:hover .category-art{transform:translateY(-12px) scale(1.045)}
+.category .arrow{transition:transform .35s ease}
+.category:hover .arrow{transform:translate(3px,-3px)}
+.contact__button{transition:transform .3s ease,background .3s ease,color .3s ease}
+.contact__button:hover{transform:translateY(-4px)}
+@keyframes fade-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes orbit-turn{from{rotate:0deg}to{rotate:360deg}}
+@supports (animation-timeline: view()){
+  .hero-visual .visual-label.top{animation:label-parallax 1s linear both;animation-timeline:view(block);animation-range:entry 0% exit 100%}
+  .hero-visual .visual-label.bottom{animation:label-parallax-reverse 1s linear both;animation-timeline:view(block);animation-range:entry 0% exit 100%}
+  .hero-visual .device{animation:float 6s ease-in-out infinite,device-parallax 1s linear both;animation-timeline:auto,view(block);animation-range:normal,entry 0% exit 100%}
+}
+@keyframes label-parallax{from{translate:0 -18px}to{translate:0 30px}}
+@keyframes label-parallax-reverse{from{translate:0 25px}to{translate:0 -22px}}
+@keyframes device-parallax{from{translate:0 -20px}to{translate:0 24px}}
+@media(prefers-reduced-motion:reduce){
+  .hero-copy .eyebrow,.hero-copy h1,.hero-description,.hero-actions,.hero-visual .orbit,.hero-visual .visual-label,.hero-visual .device{animation:none!important}
+  .category-art,.category .arrow,.contact__button{transition:none!important}
+  .category:hover .category-art,.category:hover .arrow,.contact__button:hover{transform:none}
+}

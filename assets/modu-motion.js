@@ -20,49 +20,59 @@
   document.addEventListener('shopify:section:load', reveal);
 
   if (reducedMotion.matches || window.Shopify?.designMode) return;
-  let position = window.scrollY;
-  let target = position;
+  let target = scrollY;
   let previousTime = 0;
   let frame = 0;
-  let programmatic = false;
-  const maxScroll = () => Math.max(0, document.documentElement.scrollHeight - innerHeight);
-  const clamp = (value) => Math.min(maxScroll(), Math.max(0, value));
-  const animate = (time) => {
-    const elapsed = Math.min(time - (previousTime || time), 64);
+  const clamp = value => Math.min(Math.max(0, document.documentElement.scrollHeight - innerHeight), Math.max(0, value));
+  const stop = () => {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+    previousTime = 0;
+    target = scrollY;
+  };
+  const animate = time => {
+    const elapsed = Math.min(time - (previousTime || time - 16), 50);
     previousTime = time;
+    const position = scrollY;
     const easing = 1 - Math.exp(-elapsed / 125);
-    position += (target - position) * easing;
-    if (Math.abs(target - position) < 0.5) position = target;
-    programmatic = true;
-    scrollTo(0, position);
-    programmatic = false;
-    if (position !== target) frame = requestAnimationFrame(animate);
-    else { frame = 0; previousTime = 0; }
+    const next = position + (target - position) * easing;
+    if (Math.abs(target - position) < 0.75 || Math.abs(next - position) < 1) {
+      scrollTo(0, target);
+      frame = 0;
+      previousTime = 0;
+      return;
+    }
+    scrollTo(0, next);
+    frame = requestAnimationFrame(animate);
   };
   const scrollableAncestor = (element, delta) => {
     for (let node = element; node && node !== document.body; node = node.parentElement) {
       if (!(node instanceof HTMLElement)) continue;
       const style = getComputedStyle(node);
-      if (!/(auto|scroll)/.test(style.overflowY)) continue;
-      if (node.scrollHeight <= node.clientHeight + 2) continue;
+      if (!/(auto|scroll)/.test(style.overflowY) || node.scrollHeight <= node.clientHeight + 2) continue;
       if ((delta > 0 && node.scrollTop < node.scrollHeight - node.clientHeight - 1) || (delta < 0 && node.scrollTop > 1)) return true;
     }
     return false;
   };
-  addEventListener('wheel', (event) => {
-    if (event.defaultPrevented || event.ctrlKey || event.metaKey || reducedMotion.matches) return;
-    if (document.querySelector('dialog[open], .menu-drawer[open], .cart-drawer.active, .modal--open')) return;
-    if (event.target.closest('input, textarea, select, [contenteditable], iframe')) return;
+  addEventListener('wheel', event => {
+    const element = event.target instanceof Element ? event.target : null;
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey || !element || reducedMotion.matches) return;
+    if (document.querySelector('dialog[open], .menu-drawer[open], .cart-drawer.active, .modal--open')) { stop(); return; }
+    if (element.closest('input, textarea, select, [contenteditable], iframe')) return;
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
     const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * innerHeight : event.deltaY;
-    if (Math.abs(delta) < 40 || Math.abs(delta) > 600 || scrollableAncestor(event.target, delta)) return;
+    if (scrollableAncestor(element, delta)) { stop(); return; }
+    if (event.deltaMode === 0 && (Math.abs(delta) < 80 || Math.abs(delta) > 500)) { stop(); return; }
+    if (!delta) return;
+    const nextTarget = clamp((frame ? target : scrollY) + Math.max(-260, Math.min(260, delta)));
+    if (nextTarget === scrollY && !frame) return;
     event.preventDefault();
-    if (!frame) position = window.scrollY;
-    target = clamp((frame ? target : position) + delta);
+    target = nextTarget;
     if (!frame) frame = requestAnimationFrame(animate);
   }, { passive: false });
-  addEventListener('scroll', () => {
-    if (!programmatic && !frame) position = target = window.scrollY;
-  }, { passive: true });
-  addEventListener('keydown', () => { if (frame) { cancelAnimationFrame(frame); frame = 0; previousTime = 0; position = target = window.scrollY; } });
-  addEventListener('resize', () => { target = clamp(target); });
+  addEventListener('keydown', stop, { passive: true });
+  addEventListener('touchstart', stop, { passive: true });
+  addEventListener('pointerdown', stop, { passive: true });
+  addEventListener('hashchange', stop, { passive: true });
+  addEventListener('resize', () => { target = clamp(target); }, { passive: true });
 })();

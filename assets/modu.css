@@ -29,3 +29,22 @@ body{background:var(--modu-paper)}
 @keyframes modu-float{50%{transform:translateY(-16px) rotate(-10deg) rotateY(-18deg)}}
 @media(max-width:800px){.modu-hero{grid-template-columns:1fr;min-height:0}.modu-hero__copy{padding:66px 24px 54px}.modu-hero h1{font-size:clamp(55px,13vw,90px)}.modu-hero__visual{min-height:450px}.modu-device{width:45%;min-width:220px}.modu-hero__index{display:none}.modu-benefits{grid-template-columns:1fr;padding-top:35px;padding-bottom:35px}.modu-benefit,.modu-benefit:first-child{border-left:0;border-top:1px solid var(--modu-line);padding:26px 0}}
 @media(prefers-reduced-motion:reduce){.modu-device{animation:none}[data-modu-reveal]{opacity:1;transform:none;transition:none}.modu-button{transition:none}}
+/* Composited motion and scroll-linked parallax */
+.modu-hero__copy .modu-eyebrow{animation:modu-enter .85s .1s both}
+.modu-hero__copy h1{animation:modu-enter 1s .18s both}
+.modu-hero__description{animation:modu-enter .9s .3s both}
+.modu-hero__actions{animation:modu-enter .9s .42s both}
+.modu-hero__visual::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 42%,rgba(12,29,4,.12));mix-blend-mode:soft-light}
+.modu-benefit:nth-child(2){transition-delay:.09s}
+.modu-benefit:nth-child(3){transition-delay:.18s}
+.modu-button:focus-visible,.modu-text-link:focus-visible{outline:2px solid var(--modu-ink);outline-offset:4px}
+@keyframes modu-enter{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@supports (animation-timeline: view()){
+  .modu-hero__visual .modu-visual-label--top{animation:modu-label-down 1s linear both;animation-timeline:view(block);animation-range:entry 0% exit 100%}
+  .modu-hero__visual .modu-visual-label--bottom{animation:modu-label-up 1s linear both;animation-timeline:view(block);animation-range:entry 0% exit 100%}
+  .modu-hero__visual .modu-device{animation:modu-float 6s ease-in-out infinite,modu-device-drift 1s linear both;animation-timeline:auto,view(block);animation-range:normal,entry 0% exit 100%}
+}
+@keyframes modu-label-down{from{translate:0 -18px}to{translate:0 30px}}
+@keyframes modu-label-up{from{translate:0 25px}to{translate:0 -22px}}
+@keyframes modu-device-drift{from{translate:0 -20px}to{translate:0 24px}}
+@media(prefers-reduced-motion:reduce){.modu-hero__copy .modu-eyebrow,.modu-hero__copy h1,.modu-hero__description,.modu-hero__actions,.modu-hero__visual .modu-visual-label,.modu-hero__visual .modu-device{animation:none!important}}
