@@ -1,0 +1,17 @@
+html { scroll-behavior: auto; }
+
+.parallax { will-change: transform; }
+.parallax-layer { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 850ms ease, transform 850ms ease;
+}
+
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax { transform: none !important; will-change: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}

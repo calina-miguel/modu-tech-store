@@ -30,79 +30,90 @@
       if (wasMobileOpen) menu.focus();
     }
   });
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const nodes = document.querySelectorAll('.reveal');
-  if (reduced.matches || !('IntersectionObserver' in window)) nodes.forEach(node => node.classList.add('is-visible'));
-  else {
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
-    }), { threshold: .12 });
-    nodes.forEach(node => observer.observe(node));
-  }
 })();
 
-/* Ease discrete wheel steps while preserving native touchpad and nested scrolling. */
 (() => {
-  let target = null;
-  let position = 0;
-  let frameId = 0;
-  let lastTime = 0;
+  const easeTime = 125;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const parallaxItems = document.querySelectorAll('.parallax');
+  let position = window.scrollY;
+  let target = position;
+  let previousTime = 0;
+  let frame = 0;
 
-  function cancel() {
-    if (frameId) cancelAnimationFrame(frameId);
-    frameId = 0;
-    target = null;
-    lastTime = 0;
-    document.documentElement.classList.remove('modu-wheel-active');
-  }
-
-  function hasNestedScroller(start) {
-    for (let element = start instanceof Element ? start : null; element && element !== document.body; element = element.parentElement) {
-      if (element.matches('select, textarea, [contenteditable="true"], .cart-drawer, cart-drawer, [role="dialog"]')) return true;
-      const style = getComputedStyle(element);
-      if (/(auto|scroll)/.test(style.overflowY) && element.scrollHeight > element.clientHeight + 2) return true;
+  function updateParallax() {
+    if (reducedMotion.matches) return;
+    for (const item of parallaxItems) {
+      const speed = Number(item.dataset.speed || 0.18);
+      const section = item.closest('section') || item;
+      const distance = -section.getBoundingClientRect().top;
+      item.style.transform = `translate3d(0, ${distance * speed}px, 0)`;
     }
-    return false;
   }
 
   function animate(time) {
-    const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
-    target = Math.min(target, maxScroll);
-    const elapsed = lastTime ? Math.max(0, time - lastTime) : 16.7;
-    lastTime = time;
-    const easing = 1 - Math.exp(-elapsed / 125);
+    const elapsed = Math.min(time - (previousTime || time), 64);
+    previousTime = time;
+    const easing = 1 - Math.exp(-elapsed / easeTime);
     position += (target - position) * easing;
-    if (Math.abs(target - position) < 0.5) {
-      scrollTo(0, target);
-      cancel();
-      return;
-    }
-    scrollTo(0, position);
-    frameId = requestAnimationFrame(animate);
+    if (Math.abs(target - position) < 0.5) position = target;
+    window.scrollTo(0, position);
+    updateParallax();
+    if (position !== target) frame = requestAnimationFrame(animate);
+    else { frame = 0; previousTime = 0; }
   }
 
-  addEventListener('wheel', event => {
-    if (reducedMotion.matches) return;
-    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
-    if (Math.abs(event.deltaX) > Math.abs(event.deltaY) || hasNestedScroller(event.target)) return;
-    const discrete = event.deltaMode !== 0 || (Math.abs(event.deltaY) >= 50 && Number.isInteger(event.deltaY));
-    if (!discrete) return;
+  function stop() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+    previousTime = 0;
+    position = target = window.scrollY;
+  }
 
-    const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
-    if (maxScroll === 0) return;
-    const delta = event.deltaMode === 1 ? event.deltaY * 18 : event.deltaMode === 2 ? event.deltaY * innerHeight : event.deltaY;
-    if ((scrollY <= 0 && delta < 0) || (scrollY >= maxScroll && delta > 0)) return;
+  window.addEventListener('wheel', event => {
+    const element = event.target instanceof Element ? event.target : null;
+    if (reducedMotion.matches || event.defaultPrevented || event.ctrlKey || event.metaKey || !element) return;
+    if (element.closest('input, textarea, select, [data-native-scroll]')) return;
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
     event.preventDefault();
-    document.documentElement.classList.add('modu-wheel-active');
-    if (target === null) position = scrollY;
-    target = Math.max(0, Math.min(maxScroll, (target ?? scrollY) + Math.max(-320, Math.min(320, delta))));
-    if (!frameId) frameId = requestAnimationFrame(animate);
+    const multiplier = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1;
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    target = Math.max(0, Math.min(maxScroll, target + event.deltaY * multiplier));
+    if (!frame) {
+      position = window.scrollY;
+      frame = requestAnimationFrame(animate);
+    }
   }, { passive: false });
 
-  addEventListener('pointerdown', cancel, { passive: true });
-  reducedMotion.addEventListener('change', cancel);
-  addEventListener('keydown', event => {
-    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) cancel();
+  window.addEventListener('scroll', () => {
+    if (!frame) {
+      position = window.scrollY;
+      target = position;
+      updateParallax();
+    }
+  }, { passive: true });
+  window.addEventListener('resize', updateParallax, { passive: true });
+  window.addEventListener('pointerdown', stop, { passive: true });
+  window.addEventListener('touchstart', stop, { passive: true });
+  window.addEventListener('keydown', stop, { passive: true });
+  reducedMotion.addEventListener('change', () => {
+    stop();
+    if (reducedMotion.matches) parallaxItems.forEach(item => item.style.removeProperty('transform'));
+    else updateParallax();
   });
+
+  if ('IntersectionObserver' in window && !reducedMotion.matches) {
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(item => observer.observe(item));
+  } else {
+    document.querySelectorAll('.reveal').forEach(item => item.classList.add('is-visible'));
+  }
+  updateParallax();
 })();

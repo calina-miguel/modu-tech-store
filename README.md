@@ -9,7 +9,7 @@ This is a new tech accessories storefront built on Shopify's free Dawn Liquid th
 - Responsive homepage with editable editorial hero and benefits.
 - Native Dawn product, variant, collection, filtering, search, cart drawer, localization, and checkout flow.
 - Featured products are drawn from the `all` collection by default. Add real products in Shopify admin.
-- Scroll reveal, floating device visual, CSS parallax, hover motion, and eased discrete mouse-wheel steps.
+- Scroll reveal, floating device visual, parallax, hover motion, and eased wheel scrolling on the public site.
 - Reduced-motion setting disables motion. Touchpad, touch, keyboard, and nested cart scrolling remain native.
 
 ## Install and finish the store
