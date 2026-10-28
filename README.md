@@ -1,5 +1,7 @@
 # MODU Tech Shopify theme
 
+Interactive build guide: https://calina-miguel.github.io/modu-tech-store/guide/
+
 This is a new tech accessories storefront built on Shopify's free Dawn Liquid theme. The visual identity, homepage sections, CSS, and motion script are original to this project. No paid animation library, font, image, or theme component is required.
 
 ## What works once installed on a Shopify store
