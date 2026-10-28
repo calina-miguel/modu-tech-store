@@ -1,5 +1,5 @@
 :root{--modu-ink:#17201d;--modu-green:#c6ee46;--modu-paper:#f4f5ef;--modu-line:#d9ded4}
-html{scroll-behavior:auto}
+html{scroll-behavior:smooth;scroll-padding-top:82px}
 body{background:var(--modu-paper)}
 .header-wrapper,.section-header{background:var(--modu-paper)}
 .header__heading-link{letter-spacing:-.09em;font-weight:800}
@@ -42,7 +42,6 @@ body{background:var(--modu-paper)}
 @supports (animation-timeline: view()){
   .modu-hero__visual .modu-visual-label--top{animation:modu-label-down 1s linear both;animation-timeline:view(block);animation-range:entry 0% exit 100%}
   .modu-hero__visual .modu-visual-label--bottom{animation:modu-label-up 1s linear both;animation-timeline:view(block);animation-range:entry 0% exit 100%}
-  .modu-hero__visual .modu-device{animation:modu-float 6s ease-in-out infinite,modu-device-drift 1s linear both;animation-timeline:auto,view(block);animation-range:normal,entry 0% exit 100%}
 }
 @keyframes modu-label-down{from{translate:0 -18px}to{translate:0 30px}}
 @keyframes modu-label-up{from{translate:0 25px}to{translate:0 -22px}}
